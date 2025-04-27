@@ -1,0 +1,39 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  image: python:3.10
+  script:
+    - echo "Installing dependencies..."
+    - pip install -r requirements.txt
+    - echo "Build stage complete."
+
+unit-test-job:
+  stage: test
+  image: python:3.10
+  script:
+    - pip install -r requirements.txt
+    - echo "Running Python unit tests..."
+    - python -m unittest discover -s tests
+
+lint-test-job:
+  stage: test
+  image: python:3.10
+  script:
+    - pip install flake8
+    - echo "Running flake8 linter..."
+    - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
+
+deploy-job:
+  stage: deploy
+  image: python:3.10
+  script:
+    - pip install -r requirements.txt
+    - echo "Starting FastAPI app for deployment simulation..."
+    - echo "Use 'uvicorn main:app --reload' in real deployment."
+  environment: production
+  when: manual
+
